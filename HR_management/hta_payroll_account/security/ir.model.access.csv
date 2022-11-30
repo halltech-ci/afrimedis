@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hta_payroll_account_hta_payroll_account,hta_payroll_account.hta_payroll_account,model_hta_payroll_account_hta_payroll_account,base.group_user,1,1,1,1

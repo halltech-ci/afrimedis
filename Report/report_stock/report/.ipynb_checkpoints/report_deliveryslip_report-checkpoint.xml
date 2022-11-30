@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="secondary_uom_report_delivery_document" inherit_id="stock.report_delivery_document">
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address">
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-set='information_block']" position="replace">
+            <t t-set="information_block">
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('page')]/h2[1]" position="replace">
+            <div class="row" style="margin-top:12px;margin-bottom:12px; font-size:0.8em; font-family: Times New Roman">
+                 <div class="col-8">
+                     <t t-if="o.picking_type_code == 'outgoing'">
+                         <div>
+                             <p class="text-left">BON DE LIVRAISON </p>
+                         </div>
+                     </t>
+                     <t t-if="o.picking_type_code == 'incoming'">
+                         <div>
+                             <p class="text-left">BORDEREAU DE RECEPTION </p>
+                         </div>
+                     </t>
+
+                     <t t-if="o.picking_type_code == 'internal'">
+                         <div>
+                             <p class="text-left">BON DE SORTIE</p>
+                         </div>
+                     </t>
+                 </div>
+                 <div class="col-4">
+                     <div class="text-right">
+                       <p class="text-right">Edité le : <span t-esc="o.scheduled_date.strftime('%d/%m/%Y')"/></p>
+                    </div>
+                 </div>
+            </div>
+            <div class="row">
+                 <div class="col-6 text-left" >
+                     <table class="table" style="font-size:0.8em; font-family: Times New Roman;">
+                         <tr>
+                             <td style="border: 1px solid black;" class="text-center">N° Pièce</td>
+                             <td style="border: 1px solid black;" class="text-center">Date</td>
+                         </tr>
+                          <tr>
+                             <td style="border: 1px solid black;" class="text-center"><span t-field="o.name"/></td>
+                             <td style="border: 1px solid black;" class="text-center"><span t-esc="o.date_done"/></td>
+                         </tr>
+                     </table>
+                 </div>
+                 <div class="col-6 text-center" style="font-size:0.8em; font-family: Times New Roman">
+                     <p>Destinataire :</p>
+                     <p><span class="bold" t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                     </p>
+                 </div>
+            </div>
+            <div class="row">
+                <div class="col-6 text-left" style="font-size:0.8em; font-family: Times New Roman;">
+                    <t t-if="o.sale_id">
+                        <p class="text-left">Ref. Commande client : <span t-esc="o.sale_id.client_order_ref"/></p>
+                    </t>
+                    <t t-if="o.purchase_id">
+                        <p class="text-left">N° Bon de commande : <span t-esc="o.purchase_id.name"/></p>
+                    </t>
+                </div>
+                <div class="col-6 text-left"></div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-left" style="font-size:0.8em; font-family: Times New Roman;">
+                    <t t-if="o.sale_id">
+                        <p class="text-left"><span t-esc="o.sale_id.client_order_ref"/></p>
+                    </t>
+                    <t t-if="o.purchase_id">
+                        <p class="text-left"><span t-esc="o.purchase_id.name"/></p>
+                    </t>
+                </div>
+                <div class="col-4 text-left"></div>
+                <div class="col-4 text-left"></div>
+            </div>
+            <br/>
+        </xpath>
+        <xpath expr="//div[hasclass('page')]/div[hasclass('row', 'mt32', 'mb32')]" position="replace"></xpath>
+        <xpath expr="//table[@name='stock_move_table']" position="replace">
+            <table class="table table-sm o_main_table text-left" style="font-size:0.8em; font-family: Times New Roman; width: 100%;margin-top:20px;margin-left:0px;">
+                    <tr>
+                        <th name="th_reference" style="border-bottom: 1px solid black;border-top: 0;"><strong>Référence</strong></th>
+                        <th name="th_description" style="border-bottom: 1px solid black;border-top: 0;"><strong>Désignation</strong></th>
+                        <th name="th_quantity" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>Qté</strong></th>
+                        <th name="th_quantity" class="text-right" style="border-bottom: 1px solid black;border-top: 0;">
+                            <t t-if="o.picking_type_code == 'outgoing'">
+                                <strong>Qté livrée</strong>
+                            </t>
+                            <t t-if="o.picking_type_code == 'incoming'">
+                                <strong>Qté reçue</strong>
+                            </t>
+                            <t t-if="o.picking_type_code == 'internal'">
+                                <strong>Qté traitée</strong>
+                            </t>
+                        </th>
+                        <th name="th_unit" class="text-center" style="border-bottom: 1px solid black;border-top: 0;"><strong>Unité</strong></th>
+                    </tr>
+                <t t-set="lines" t-value="o.move_lines.filtered(lambda x: x.product_uom_qty)"/>
+                    <t t-foreach="lines" t-as="line">
+                        <tr >    
+                            <td id="ref" style="border: 0;">
+                                <span t-field="line.product_id.default_code"/>
+                            </td>
+                            <td id="product" style="border: 0;">
+                                <span t-field="line.product_id.name"/>
+                            </td>
+                            <td class="text-right" style="border: 0;">
+                                <span t-field="line.product_uom_qty"/>
+                            </td>
+                            <td class="text-right" style="border: 0;">
+                                <span t-field="line.quantity_done"/>                                   
+                            </td>
+                            <td class="text-center" style="border:0;">
+                                <span>U</span>
+                            </td>                                              
+                        </tr>
+                    </t>
+            </table>
+            <br/><br/>
+            <div class='row' style="font-size:0.8em; font-family: Times New Roman;">
+                <t t-if="o.picking_type_code == 'outgoing'">
+                    <div class="col-6">
+                        <p><strong>Signature et cachet AFRIMEDIS</strong></p>
+                    </div>
+                    <div class="col-6 text-center">
+                        <p><strong>Signature et cachet Client</strong></p>
+                    </div>
+                </t>
+                <t t-if="o.picking_type_code == 'internal'">
+                    <div class="col-6">
+                        <p><strong>Signature Magasinier</strong></p>
+                    </div>
+                    <div class="col-6 text-center">
+                        <p><strong>Signature Récepteur</strong></p>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+        <xpath expr="//table[@name='stock_move_line_table']" position="replace">
+        </xpath>
+    </template>
+</odoo>

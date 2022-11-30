@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="inherit_report_saleorder_document" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//t[@t-set='address']" position="replace">
+                <div class="row" style="font-size:0.8em;font-family: Times New Roman; padding:0">
+                    <div class="col-6">
+                        <table width="100%" class="table table-sm o_main_table" style="font-size:0.8em;font-family: Times New Roman; border: 0;">
+                            <tr>
+                                <td width="40%" style="border: 0;"><span><strong>Facture Pro forma N°</strong></span></td>
+                                <td width="60%" style="border: 0;"><strong>: <span t-field="doc.name"/></strong></td>
+                            </tr>
+                            <tr>
+                                <td width="40%" style="border: 0;"><span>Etablie par</span></td>
+                                <td width="60%" style="border: 0;">: <span t-field="doc.create_uid"/></td>
+                            </tr>
+                            <tr>
+                                <td width="40%" style="border: 0;"><span>Commercial</span></td>
+                                <td width="60%" style="border: 0;">: <span t-field="doc.user_id"/></td>
+                            </tr>
+                            <tr>
+                                <td width="40%" style="border: 0;"><span>Pro forma valide jusqu'au</span></td>
+                                <td width="60%" style="border: 0;">: <span t-esc="doc.validity_date"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-6 text-right">
+                        <div style="display:inline-block">
+                            <p>Date :</p>
+                        </div>
+                        <div style="display:inline-block">
+                            <p> <span t-esc="doc.date_order.strftime('%d/%m/%Y')"/> </p>
+                        </div> <br />
+                        <div style="display:inline-block" class="text-right">
+                            
+                                <p class="text-left" style="padding:0;margin:0;">Doit :</p>
+                            <p class="text-center" style="padding:0;margin:0;"> <span t-field="doc.partner_id" /> </p>                            
+                            <p class="text-center" style="padding:0;margin:0;">
+                                <span t-field="doc.partner_id.city" />,<span t-field="doc.partner_id.street" />
+                            </p>
+                            
+                        </div>
+                    </div>
+                </div>
+<!--             <br/> -->
+        </xpath>
+        
+        <xpath expr="//div[hasclass('page')]/h2" position="replace">
+          
+        </xpath>
+        <xpath expr="//div[hasclass('page')]/div[@id='informations']" position="replace">
+        </xpath>
+        <xpath expr="//div[hasclass('page')]/table[hasclass('o_main_table')]" position="replace">
+              <table class="table table-sm o_main_table" style="font-size:0.8em;margin-top: 40px;font-family: Times New Roman;">
+                
+                    <tr>
+                        <th name="th_description" style="border-bottom: 1px solid black;border-top: 0;"><strong>REF</strong></th>
+                        <th name="th_description" style="border-bottom: 1px solid black;border-top: 0;"><strong>DESCRIPTION</strong></th>
+                        <th name="th_unit" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>QTE</strong></th>
+                        <th name="th_quantity" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>UNITE</strong></th>
+                        <th name="th_price_unit" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>P.U</strong></th>
+                        <th name="th_tva" class="text-center" style="border-bottom: 1px solid black;border-top: 0;"><span>% TVA</span></th>
+                        <th name="th_price_remise" style="border-bottom: 1px solid black;border-top: 0;" class="text-center">
+                            <span>% REM.</span>
+                        </th>
+                        <th name="th_amount" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>MONTANT</strong></th>
+                    </tr>
+                  <t t-set="amount_taxed" t-value='0'/>
+                  <t t-set="total_tax_poucen" t-value='0'/>
+                    <t t-foreach="doc.order_line" t-as="line">
+
+                        <tr >
+                            <t t-if="not line.display_type">
+                                <td id="product" style="border: 0;">
+                                    <span t-field="line.product_id.default_code"/>
+                                </td>
+                                <td id="product" style="border: 0;">
+                                    <span t-field="line.product_id.name"/>
+                                </td>
+                                <td class="text-right" style="border:0;">
+                                   <span t-field="line.product_uom_qty" t-options='{"widget": "float", "precision": 0}'/>
+                                </td>
+                                <td class="text-right" style="border: 0;">
+                                    U                    
+                                </td>
+
+                                
+                                <td class="text-right" style="border: 0;">
+                                    <span t-field="line.price_unit" t-options='{"widget": "float", "precision": 0}'/>
+                                </td>
+                                <td class="text-center" style="border: 0;">
+                                    <t t-if="line.tax_id">
+                                         <span t-field="line.tax_id.amount" t-options='{"widget": "float", "precision": 0}'/>
+                                    </t>
+                                    <t t-else="">
+                                         <span style="opacity:0">0</span>
+                                    </t>
+                                    
+                                </td>
+                                <td class="text-center" style="border: 0;">
+                                    <t t-if="line.discount > 0">
+                                         <span t-field="line.discount" t-options='{"widget": "float", "precision": 0}'/>
+                                    </t>
+                                    <t t-else="">
+                                         <span style="opacity:0">0</span>
+                                    </t>
+                                    
+                                </td>                                
+                                <td class="text-right" style="border: 0;">
+                                    <span t-field="line.price_subtotal" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                                </td>
+                            </t>
+                            <t t-if="line.display_type == 'line_section'">
+                                <td colspan="99" id="section" style="border:0;">
+                                    <span t-field="line.name"/>
+                                </td>
+                                <t t-set="current_section" t-value="line" />
+                                <t t-set="current_subtotal" t-value="0" t-options="{&quot;widget&quot;: &quot;False&quot;}"/>
+                            </t>
+                            <t t-if="line.display_type == 'line_note'">
+                                <td colspan="99" id="note" style="">
+                                    <span t-field="line.name"/>
+                                </td>
+                            </t>
+                        </tr>
+                        <t t-if="line.tax_id">
+                                    <t t-set="amount_taxed" t-value="amount_taxed + line.price_subtotal"/>
+                        </t>
+
+                    </t>
+                    
+
+            </table>
+                     <t t-id="doc.amount_tax">
+                    <t t-if="doc.amount_tax">
+
+                     <table class="table table-sm o_main_table text-left" style="width: 45%;margin-left:0px;margin-bottom:5px;font-size:0.8em;font-family: Times New Roman;margin-top:100px;">
+                         <tr>
+                             <td style="border-bottom: 1px solid black;border-top: 0;padding:0;margin:0;" class="text-center">Base TVA</td>
+
+                             <td style="border-bottom: 1px solid black;border-top: 0;padding:0;margin:0;" class="text-right">% TVA</td>
+                             <td style="border-bottom: 1px solid black;border-top: 0;padding:0;margin:0;" class="text-right" >Montant Taxe</td>
+                         </tr>
+                          <tr>
+                             <td style="border:0;padding:0;margin:0;" class="text-center"><span t-esc="amount_taxed" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/></td>               
+                              <td style="border:0;padding:0;margin:0;" class="text-right">
+                                  <span t-field="doc.total_tax_poucen" t-options='{"widget": "float", "precision": 0}' /></td>
+                              <td class="text-right" style="border:0;padding:0;margin:0;"><span t-field="doc.amount_tax" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/></td>
+                         </tr>
+                    </table>
+                </t>
+                   </t>
+
+                <div class="row" style="margin-top:0px; line-height: 50%">
+                    <div class="col-6" style="font-family: Times New Roman; font-size:0.8em;">
+                    
+                    </div>
+                    <div class="col-6 text-right" style="font-family: Times New Roman; font-size:0.8em">
+                        <div class="first-colonne text-left" style="display: inline-block;">
+                                    <t t-if="doc.amount_tax">
+                                        <p style="font-weight:bold;">MONTANT HT </p>
+                                        <p style="font-weight:bold;">MONTANT TVA</p>
+                                        <p style="font-weight:bold;">TOTAL TTC </p>
+                                     </t>
+                                        <p style="font-weight:bold;">NET À PAYER  </p>
+                                    
+                                    </div>
+                                     <div class="point" style="display: inline-block;margin-left:3px;">
+                                        <t t-if="doc.amount_tax">
+
+                                        <p style="font-weight:bold;"> : </p>
+                                        <p style="font-weight:bold;"> : </p>
+                                        <p style="font-weight:bold;"> : </p>
+                                        </t>
+                                        <p style="font-weight:bold;"> : </p>
+                                       
+                                    </div>
+                                    <div class="point text-right" style="display: inline-block;margin-left:2px;">
+                                        <t t-if="doc.amount_tax">
+                                        <p style="font-weight:bold;"><span t-field="doc.amount_untaxed" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/></p>
+                                        <p style="font-weight:bold;"> <span t-field="doc.amount_tax" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/></p>
+                                        <p style='font-weight:bold;'><span t-field="doc.amount_total" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/> </p>
+                                        </t>
+                                         <p style="font-weight:bold;"><span t-field="doc.amount_total" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/> </p>
+                                    </div>
+                    </div>
+                </div>
+                
+                     
+            <div class="container-fluid" style="margin-top: 20px;font-size:0.8em;font-family: Times New Roman">
+                        <div>
+                            <div class="text-center mt-5" style="">
+                                 <p>Si vous avez une question concernant la présente facture pro forma, n'hesitez pas à nous contacter:</p>
+                                
+                            </div>
+                            
+                        </div>
+                    <div style="font-size:0.8em;margin-top: 50px;">
+                            <div class="text-center mt-5" style="font-weight: bold;font-family: Times New Roman">
+                                 <p>NOUS VOUS REMERCIONS DE NOUS AVOIR CHOISIS</p>
+                            </div>
+                            
+                        </div>
+                
+                 
+            </div>
+             
+         </xpath>
+        <xpath expr="//div[@id='total']" position="replace">
+         
+         </xpath>
+        <xpath expr="//p[@t-field='doc.note']" position="replace">
+         
+         </xpath>
+        <xpath expr="//p[@t-if='not is_html_empty(doc.payment_term_id.note)']" position="replace">
+         
+         </xpath>
+
+    </template>
+    
+</odoo>

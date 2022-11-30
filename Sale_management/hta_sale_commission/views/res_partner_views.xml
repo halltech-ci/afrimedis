@@ -1,0 +1,17 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="sale_commission_partner_views">
+        <field name="name">sale.commission.partner.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='sales_purchases']//field[@name='property_supplier_payment_term_id']" position="after">
+                <field name="agent" string="Agent" />
+            </xpath>
+            <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="after">
+                <field name="agent_ids" widget="many2many_tags" context="{'default_agent': True}"/>
+          </xpath>
+        </field>
+    </record>
+  </data>
+</odoo>

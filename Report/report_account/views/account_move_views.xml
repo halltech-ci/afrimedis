@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="account_move_inherit_views">
+        <field name="name">account_move.views_inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='tax_totals_json']" position="before">
+                <label for="discount_amount" groups="base.group_user"/>
+                <div groups="base.group_user">
+                    <field name="discount_amount" class="oe_inline"/>
+                </div>
+            </xpath>
+          <xpath expr="//header/button[@name='action_post']" position="replace">
+            <button name="action_post"
+                  string="Post" class="oe_highlight" 
+                  type="object" 
+                  groups="account.group_account_invoice" 
+                  attrs="{'invisible': [('state', '!=', 'draft')]}"
+                  confirm='Voulez-vous vraiment comptabilier cette facture ?'
+            />
+          </xpath>
+          <!-- Insert BL number on sale invoice-->
+          <xpath expr="//sheet/group/group[2]/div[@name='journal_div']" position="after">
+              <field name="payment_mode" string="Mode de Paiement"/>
+              <field name="invoice_payment_term_id" string='Conditionde paiement'/>
+              <field name="delivery_slip" string="N° Bon de livraison"/>
+          </xpath>
+          <!-- Insert source document on sale invoice-->
+          <xpath expr="//sheet/group/group/field[@name='ref']" position="after">
+             <field name="source_document" string='N° Bon de commande:'/>
+             <!--<field name='customer_reference'/>-->
+          </xpath>
+          <xpath expr="//sheet/notebook" position="before">
+              <group>
+                 <field name="invoice_object"/>
+              </group>
+          </xpath>
+          <xpath expr="//sheet/notebook/page[1]/field[@name='invoice_line_ids']" position="after">
+              <div class="oe_subtotal_footer_separator oe_inline o_td_label" style="font-size:15px;">
+                  <group attrs="{'invisible': [('amount_total', '&lt;=', 0)]}">
+                      <span><field name="amount_to_word" nolabel="1"/>
+                          FRANCS CFA</span>
+                  </group>
+              </div>
+          </xpath>
+          <xpath expr="//notebook/page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='product_id']" position='before'>
+                <field name="acompte" optional="hide"/>
+          </xpath>
+        </field>
+    </record>
+
+  </data>
+</odoo>
