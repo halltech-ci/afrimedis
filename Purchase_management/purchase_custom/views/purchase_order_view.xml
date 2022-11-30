@@ -1,0 +1,18 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="purchase_inherit_order_form">
+      <field name="name">purchase.order.form</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="purchase.purchase_order_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//notebook/page[2]/group/group/field[@name='user_id']" position="after"> 
+              <field name="authorized_by"/>
+
+          </xpath>
+      </field>
+    </record>
+
+  </data>
+</odoo>

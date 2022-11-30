@@ -1,0 +1,42 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="sale_order_view_inherit">
+        <field name="name">sale.order.inherit.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tax_totals_json']" position="before">
+                <label for="discount_amount" groups="base.group_user"/>
+                <div groups="base.group_user">
+                    <field name="discount_amount" class="oe_inline"/>
+                </div>
+            </xpath>
+            <xpath expr="//sheet/group" position="after">
+              <group>
+                  <field name="description"/>
+              </group>
+            </xpath>
+          <!-- Insert sale quotation recipient-->
+            <xpath expr="//sheet/group/group/field[@name='payment_term_id']" position="after">
+                <field name="sale_order_recipient" string="A l'attention de"/>
+            </xpath>
+            <xpath expr="//sheet/notebook/page[@name='order_lines']/group[@name='note_group']/group[1]/field[@name='note']" position="replace">
+            </xpath>
+            <xpath expr="//sheet/notebook/page[@name='order_lines']/group[@name='note_group']/group[@name='sale_total']" position="after">
+                <div class="oe_subtotal_footer_separator oe_inline o_td_label" style="font-size:15px;">
+                    <group attrs="{'invisible': [('tax_totals_json', '&lt;=', 0)]}">
+                        <span><field name="amount_to_word" nolabel="1"/>
+                          FRANCS CFA</span>
+                    </group>
+                </div>
+                <group colspan="4">
+                    <field name="note" nolabel="1" placeholder="Terms and conditions..."/>
+                </group>
+          </xpath> 
+          <xpath expr="//sheet/group[@name='sale_header']/group[@name='partner_details']" position='inside'>
+              <field name="partner_code"/>
+          </xpath>
+        </field>
+    </record>
+  </data>
+</odoo>

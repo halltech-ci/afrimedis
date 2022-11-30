@@ -1,0 +1,15 @@
+<odoo>
+  <data>
+      <record id="sale_order_type_view_inherit" model="ir.ui.view">
+          <field name="name">sale_order_type_view_form</field>
+          <field name="model">sale.order</field>
+          <field name="inherit_id" ref="sale.view_order_form"/>
+          <field name="arch" type="xml">
+              <xpath expr="//sheet/group/group" position="inside">
+                  <field name="sale_order_type"/>
+                  <!--<field name="sale_sequence_code" invisible='1'/>-->
+              </xpath>
+          </field>
+      </record>
+  </data>
+</odoo>

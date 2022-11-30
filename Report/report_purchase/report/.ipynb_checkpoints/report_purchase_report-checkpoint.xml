@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="purchase_report_inherit_no" inherit_id="purchase.report_purchaseorder_document">
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <table class="table table-sm o_main_table" style="font-size:0.8em;font-family: Times New Roman; border:0">
+                 <tr>
+                     <td style="border: 0;" class="text-left">BON DE COMMANDE</td>
+                     <td style="border: 0;" class="text-right"><span>Edité le : </span><span t-esc="o.date_order.strftime('%d/%m/%Y')"/></td>
+                 </tr>
+            </table>
+            <div class="row container-fluid">
+                <div class="col-6" style="border: 0; padding:0">
+                    <table class="table table-sm o_main_table" style="font-size:0.8em;font-family: Times New Roman; border:0;margin-left:3px">
+                         <tr>
+                             <td style="border: 1px solid black;" class="text-center">N° Pièce</td>
+                             <td style="border: 1px solid black;" class="text-center">Date</td>
+                         </tr>
+                          <tr>
+                             <td style="border: 1px solid black;" class="text-center"><span t-field="o.name"/></td>
+                             <td style="border: 1px solid black;" class="text-center"><span t-esc="o.date_order.strftime('%d/%m/%Y')"/></td>
+                         </tr>
+                     </table>
+                </div>
+                <div class="col-6 text-center" style="font-size:0.8em;font-family: Times New Roman; ; padding:0">
+                     <p>Code Fournisseur : <span t-field="o.partner_ref" /></p>
+                     <p><span class="bold" t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                     </p>
+                 </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('page')]/h2[1]" position="replace"></xpath>
+        <xpath expr="//div[hasclass('page')]/h2[1]" position="replace"></xpath>
+        <xpath expr="//div[hasclass('page')]/h2[1]" position="replace"></xpath>
+        <xpath expr="//div[hasclass('page')]/div[@id='informations']" position="replace"></xpath>
+        <xpath expr="//div[hasclass('page')]/table[hasclass('o_main_table')]" position="replace">
+            <table class="table table-sm o_main_table text-left" style="font-size:0.8em font-family: Times New Roman;width: 100%;margin-top:70px;margin-bottom:50px;">
+                <tr>
+                    <th name="th_reference" style="border-bottom: 1px solid black;border-top: 0;"><strong>REF</strong></th>
+                <th name="th_description" style="border-bottom: 1px solid black;border-top: 0;"><strong>DESIGNATION</strong></th>
+                    <th name="th_quantity" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>QTE</strong></th>
+                    <th name="th_unit" class="text-center" style="border-bottom: 1px solid black;border-top: 0;"><strong>UNITE</strong></th>
+                    <th name="th_price_unit" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>PU HT</strong></th>
+                    <th name="th_taxes" class="text-center" style="border-bottom: 1px solid black;border-top: 0;"><strong>% TVA</strong></th>
+                    <th name="th_remise" class="text-center" style="border-bottom: 1px solid black;border-top: 0;"><strong>%REM</strong></th>
+                    <th name="th_amount" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>MONTANT HT</strong></th>
+                </tr>
+                <t t-set="amount_taxed" t-value='0'/>
+                <t t-set="total_rem" t-value='0'/>
+                <t t-foreach="o.order_line" t-as="line">
+                    <tr >
+                        <t t-if="not line.display_type">
+                            <td id="ref" style="border: 0;">
+                                <span t-field="line.product_id.default_code"/>
+                            </td>
+                            <td id="product" style="border: 0;">
+
+                                <span t-field="line.product_id.name"/>
+
+                            </td>
+                            <td class="text-right" style="border: 0;">
+                                <span t-field="line.product_qty"/>
+                            </td>
+                            <td class="text-center" style="border: 0;">
+                                <span>U</span>
+                            </td>
+                            <td class="text-right" style="border:0;">
+                                <span t-field="line.price_unit" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                            </td>
+
+                             <td name="td_taxes" class="text-center" style="border:0;">
+                                <t t-if="line.taxes_id"> 
+                                     <span t-esc="line.taxes_id.amount" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                                 </t>
+                                <t t-else="">
+                                 </t>
+                            </td>
+                            <td class="text-center" style="border:0;">
+                                <t t-if="line.discount">
+                                     <span t-field="line.discount" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                                  </t>
+                                 <t t-else="">
+                                 </t>
+                            </td>
+                            <td class="text-right" style="border:0;">
+                                <span t-field="line.price_subtotal" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                            </td>
+                        </t>
+                        <t t-if="line.display_type == 'line_section'">
+                            <td colspan="99" id="section" >
+                                <span t-field="line.name"/>
+                            </td>
+                            <t t-set="current_section" t-value="line"/>
+                            <t t-set="current_subtotal" t-value="0" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}' />
+                        </t>
+                        <t t-if="line.display_type == 'line_note'">
+                            <td colspan="99" id="note">
+                                <span t-field="line.name"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <t t-if="line.taxes_id">
+                        <t t-set="amount_taxed" t-value="amount_taxed + line.price_subtotal"/>
+                    </t>
+                    <t t-if="line.discount">
+                        <t t-set="total_rem" t-value="(line.product_qty * line.price_unit) * line.discount / 100"/>
+                    </t>
+                </t>
+             </table>
+        </xpath>
+    </template>
+</odoo>

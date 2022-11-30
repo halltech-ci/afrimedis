@@ -1,0 +1,25 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="hta_sale_project_view_inherit">
+        <field name="name">sale.order.inherit.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//header" position="inside">
+                <button name="create_project_sale_confirm" type="object" class="oe_highlight" string="Create Project" attrs="{'invisible': [('state', 'not in', ('sale'))]}"/>
+          </xpath>
+          <xpath expr="//sheet/group" position="after">
+              <group>
+                  <field name="description"/>
+              </group>
+          </xpath>
+        
+          <xpath expr="//sheet/group/group/field[@name='payment_term_id']" position="after">
+                <field name="create_project" widget="radio" options="{'horizontal': true}" attrs="{'invisible': [('state', 'not in', ('sale'))]}"/>
+                <!--<field name='project_template' options="{'no_create': True, 'no_create_edit':True}" attrs="{'invisible': [('create_project', 'in', ('add_to_project'))]}"/>-->
+                <field name="project_id" options="{'no_create': True, 'no_create_edit':True}" attrs="{'invisible': ['|',('create_project', '=', 'create_project'), ('state', 'not in', ('sale'))], 'required':[('create_project', 'in', ('add_to_project')), ('state', 'in', ('sale'))], 'readonly': [('state', 'not in', ('sale'))]}"/>
+            </xpath>
+        </field>
+      </record>
+  </data>
+</odoo>
