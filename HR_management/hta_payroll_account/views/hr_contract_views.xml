@@ -1,0 +1,56 @@
+<odoo>
+  <data>
+      <record model="ir.ui.view" id="hta_hr_contract_form">
+          <field name="name">hta_hr_contract_form</field>
+          <field name="model">hr.contract</field>
+          <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+          <field name="arch" type="xml">
+              <xpath expr="//notebook/page[@name='information']" position="after">
+                  <page name="accounting" string="Accounting">
+                      <group>
+                          <group>
+                              <field name="account"/>
+                          </group>
+                      </group>
+                  </page>
+              </xpath>
+          </field>
+      </record>
+      
+      <!-- explicit list view definition -->
+    
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="hta_payroll_account.action_server">
+      <field name="name">hta_payroll_account server</field>
+      <field name="model_id" ref="model_hta_payroll_account_hta_payroll_account"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="hta_payroll_account" id="hta_payroll_account.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="hta_payroll_account.menu_1" parent="hta_payroll_account.menu_root"/>
+    <menuitem name="Menu 2" id="hta_payroll_account.menu_2" parent="hta_payroll_account.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="hta_payroll_account.menu_1_list" parent="hta_payroll_account.menu_1"
+              action="hta_payroll_account.action_window"/>
+    <menuitem name="Server to list" id="hta_payroll_account" parent="hta_payroll_account.menu_2"
+              action="hta_payroll_account.action_server"/>
+-->
+  </data>
+</odoo>

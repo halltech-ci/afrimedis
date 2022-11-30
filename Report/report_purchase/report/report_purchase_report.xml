@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="purchase_report_inherit_no" inherit_id="purchase.report_purchaseorder_document">
+        <xpath expr="//div[hasclass('page')]/div[@id='total']" position="replace"></xpath>
+        <xpath expr="//t[@t-set='address']" position="replace">
+        </xpath>
+        <xpath expr="//div[hasclass('page')]" position="replace">
+            <table class="table table-sm o_main_table" style="font-size:0.8em;font-family: Times New Roman; border:0">
+                 <tr>
+                     <td style="border: 0;" class="text-left">BON DE COMMANDE</td>
+                     <td style="border: 0;" class="text-right"><span>Edité le : </span><span t-esc="o.date_order.strftime('%d/%m/%Y')"/></td>
+                 </tr>
+            </table>
+            <div class="row container-fluid">
+                <div class="col-6" style="border: 0; padding:0">
+                    <table class="table table-sm o_main_table" style="font-size:0.8em;font-family: Times New Roman; border:0;margin-left:3px">
+                         <tr>
+                             <td style="border: 1px solid black;" class="text-center">N° Pièce</td>
+                             <td style="border: 1px solid black;" class="text-center">Date</td>
+                         </tr>
+                          <tr>
+                             <td style="border: 1px solid black;" class="text-center"><span t-field="o.name"/></td>
+                             <td style="border: 1px solid black;" class="text-center"><span t-esc="o.date_order.strftime('%d/%m/%Y')"/></td>
+                         </tr>
+                     </table>
+                </div>
+                <div class="col-6 text-center" style="font-size:0.8em;font-family: Times New Roman; ; padding:0">
+                     <p>Code Fournisseur : <span t-field="o.partner_ref" /></p>
+                     <p><span class="bold" t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                     </p>
+                 </div>
+            </div>            
+            <table class="table table-sm o_main_table" style="font-size:0.8em font-family: Times New Roman;margin-top:50px;margin-bottom:50px;">
+                <tr>
+                    <th name="th_reference" style="border-bottom: 1px solid black;border-top: 0;"><strong>REF</strong></th>
+                    <th name="th_description" style="border-bottom: 1px solid black;border-top: 0;"><strong>DESIGNATION</strong></th>
+                    <th name="th_quantity" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>QTE</strong></th>
+                    <th name="th_unit" class="text-center" style="border-bottom: 1px solid black;border-top: 0;"><strong>UNITE</strong></th>
+                    <th name="th_price_unit" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>PU HT</strong></th>
+                    <th name="th_taxes" class="text-center" style="border-bottom: 1px solid black;border-top: 0;"><strong>%TVA</strong></th>
+                    <th name="th_remise" class="text-center" style="border-bottom: 1px solid black;border-top: 0;"><strong>%REM</strong></th>
+                    <th name="th_amount" class="text-right" style="border-bottom: 1px solid black;border-top: 0;"><strong>MONTANT HT</strong></th>
+                </tr>
+                <t t-set="amount_taxed" t-value='0'/>
+                <t t-set="total_rem" t-value='0'/>
+                <t t-foreach="o.order_line" t-as="line">
+                    <tr >
+                        <t t-if="not line.display_type">
+                            <td id="ref" style="border: 0;">
+                                <span t-field="line.product_id.default_code"/>
+                            </td>
+                            <td id="product" style="border: 0;">
+
+                                <span t-field="line.product_id.name"/>
+
+                            </td>
+                            <td class="text-right" style="border: 0;">
+                                <span t-field="line.product_qty"/>
+                            </td>
+                            <td class="text-center" style="border: 0;">
+                                <span>U</span>
+                            </td>
+                            <td class="text-right" style="border:0;">
+                                <span t-field="line.price_unit" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                            </td>
+
+                             <td name="td_taxes" class="text-center" style="border:0;">
+                                <t t-if="line.taxes_id"> 
+                                     <span t-esc="line.taxes_id[0].amount" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                                 </t>
+                                <t t-else="">
+                                 </t>
+                            </td>
+                            <td class="text-center" style="border:0;">
+                                <t t-if="line.discount">
+                                     <span t-field="line.discount" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                                  </t>
+                                 <t t-else="">
+                                 </t>
+                            </td>
+                            <td class="text-right" style="border:0;">
+                                <span t-field="line.price_subtotal" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/>
+                            </td>
+                        </t>
+                        <t t-if="line.display_type == 'line_section'">
+                            <td colspan="99" id="section" >
+                                <span t-field="line.name"/>
+                            </td>
+                            <t t-set="current_section" t-value="line"/>
+                            <t t-set="current_subtotal" t-value="0" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}' />
+                        </t>
+                        <t t-if="line.display_type == 'line_note'">
+                            <td colspan="99" id="note">
+                                <span t-field="line.name"/>
+                            </td>
+                        </t>
+                    </tr>
+                    <t t-if="line.taxes_id">
+                        <t t-set="amount_taxed" t-value="amount_taxed + line.price_subtotal"/>
+                    </t>
+                    <t t-if="line.discount">
+                        <t t-set="total_rem" t-value="(line.product_qty * line.price_unit) * line.discount / 100"/>
+                    </t>
+                </t>
+             </table>
+             <t t-id="o.amount_tax">
+                <t t-if="o.amount_tax">
+                    <table class="table table-sm o_main_table" style="font-size:0.8em;font-family: Times New Roman; width: 45%;margin-left:0px;">               
+                         <tr>
+                             <td style="border-bottom: 1px solid black;border-top: 0;padding:0;margin:0;" class="text-center">Base TVA</td>
+                             <td style="border-bottom: 1px solid black;border-top: 0;padding:0;margin:0;" class="text-center">% TVA</td>
+                             <td style="border-bottom: 1px solid black;border-top: 0;padding:0;margin:0;" class="text-center" >Montant Taxe</td>
+                         </tr>
+                          <tr>
+                             <td style="border:0;padding:0;margin:0;" class="text-center"><span t-esc="amount_taxed" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/></td>
+                              <td style="border:0;padding:0;margin:0;" class="text-center">
+                                  <span t-field="o.amount_tax" t-options='{"widget": "float", "precision": 0}' /></td>
+                              <td class="text-center" style="border:0;padding:0;margin:0;"><span t-field="o.amount_tax" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}'/></td>
+                         </tr>
+                     </table>
+                    <br/>
+                </t>
+            </t>
+            <div class="row" style="border: 1px solid black; margin-left:2px; margin-right:0">
+                <div class='col-9' style="margin-left:0;border-right:1px solid black; padding-left:0">
+                    <table width='100%' class="table table-sm" style="font-size:0.8em; font-family: Times New Roman;border:0; padding:0">
+                        <tr>
+                            <td width='40%' style="border: 0;" class="text-left"><span>Date de livraison</span></td>
+                            <td width='60%' style="border: 0;" class="text-left">: <span t-esc="o.date_planned.strftime('%d/%m/%Y')" class="text-right"/></td>
+                        </tr>
+                        <tr>
+                            <td width='40%' style="border: 0;" class="text-left"><span>Condition de paiement</span></td>
+                            <td width='60%' style="border: 0;" class="text-left">: <span class="text-left" t-field="o.payment_term_id"/></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-3" style="margin:0; padding:0;">
+                    <table class="table table-sm" style="font-size:0.8em;font-family: Times New Roman; padding:0">
+                        <t t-if="o.amount_tax">
+                            <tr>
+                                <td width='50%' style="border: 0;" class="text-left"><strong>TOTAL HT</strong></td>
+                                <td width="10%" class="text-center" style="border: 0;">:</td>
+                                <td width='40%' style="border: 0;" class="text-right"><strong><span t-field="o.total_undiscount" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}' /></strong></td>
+                            </tr>
+                        </t>
+                        <t t-if="o.discount_amount">
+                            <tr>
+                                <td width='50%' style="border: 0;" class="text-left"><strong>TOTAL REMISE</strong></td>
+                                <td width="10%" class="text-center" style="border: 0;">:</td>
+                                <td width='40%' style="border: 0;" class="text-right"><strong><span t-field="o.discount_amount" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}' /></strong></td>
+                            </tr>
+                        </t>
+                        <t t-if="o.amount_tax">
+                            <tr>
+                                <td width='50%' style="border: 0;" class="text-left"><strong>TOTAL TVA</strong></td>
+                                <td width="10%" class="text-center" style="border: 0;">:</td>
+                                <td width='40%' style="border: 0;" class="text-right"><strong><span t-field="o.amount_tax" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}' /></strong></td>
+                            </tr>
+                            <tr>
+                                <td width='50%' style="border: 0;" class="text-left"><strong>TOTAL TTC</strong></td>
+                                <td width="10%" class="text-center" style="border: 0;">:</td>
+                                <td width='40%' style="border: 0;" class="text-right"><strong><span t-field="o.amount_total" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}' /></strong></td>
+                            </tr>
+                        </t>
+                        <t t-else="">
+                            <tr>
+                                <td width='50%' style="border: 0;" class="text-left"><strong>NET A PAYER :</strong></td>
+                                <td width="10%" class="text-center" style="border: 0;">:</td>
+                                <td width='40%' style="border: 0;" class="text-right"><strong><span t-field="o.amount_total" t-options='{&quot;widget&quot;: &quot;False&quot;,"widget": "float", "precision": 0}' /></strong></td>
+                            </tr>
+                        </t>
+                    </table>
+                </div>
+            </div>
+            <br/>
+            <div class="mt-2" style="font-size:0.8em; font-family: Times New Roman;">
+                 <p> <strong>Cachets et signatures</strong> 
+                     <t t-if="o.purchase_approver">
+                         <p><strong t-field="o.purchase_approver"/></p>
+                     </t>
+                </p>
+             </div>
+            <div style="font-size:0.8em; font-family: Times New Roman; font-style : bold; margin-top:90px;">
+                 <p>Bon de commande signé électroniquement par : <strong t-field="o.purchase_approver" /> <br /> le <span t-esc="o.date_order.strftime('%d/%m/%Y')"/></p>
+            </div>
+        </xpath>
+    </template>
+</odoo>

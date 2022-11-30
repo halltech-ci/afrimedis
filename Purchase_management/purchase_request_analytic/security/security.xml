@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+    <record id="group_purchase_request_type" model="res.groups">
+        <field name="name">Purchase Type</field>
+        <field name="implied_ids" eval="[(4, ref('purchase_request.group_purchase_request_manager'))]" />
+        <field name="category_id" ref="purchase_request.module_category_purchase_request" />
+    </record>
+</odoo>

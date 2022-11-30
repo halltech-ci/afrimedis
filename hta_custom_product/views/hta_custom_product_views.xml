@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="hta_product_attribut_form_inherit" model="ir.ui.view">
+        <field name="name">product_attribut_form_inherit</field>
+        <field name="model">product.attribute</field>
+        <field name="arch" type="xml">
+            <form string="Product Attribute">
+                <sheet>
+                    <group name="main" class="o_label_nowrap">
+                        <label for="name" string="Attribute Name"/>
+                        <field name="name" nolabel="1"/>
+                        <field name="display_type" widget="radio"/>
+                    </group>
+                    <group>
+                        <field name="product_category"/>
+                    </group>
+                    <notebook>
+                        <page string="Product Attribute Values" name="attribute_values">
+                            <field name="value_ids" widget="one2many" nolabel="1">
+                                <tree string="Values" editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="field_type"/>
+                                    <field name="field_length"/>
+                                    <field name="display_type" invisible="1"/>
+                                    <field name="is_custom" groups="product.group_product_variant"/>
+                                    <field name="html_color" attrs="{'column_invisible': [('parent.display_type', '!=', 'color')]}" widget="color"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form> 
+        </field>
+    </record>
+    
+    <record id="hta_product_attribut_tree_inherit" model="ir.ui.view">
+        <field name="name">hta_product_attribut_tree_inherit</field>
+        <field name="model">product.attribute</field>
+        <field name="arch" type="xml">
+            <tree string="Product Attribute">
+                <field name="name"/>
+                <field name="product_category"/>
+            </tree> 
+        </field>
+    </record>
+      
+    <record id="hta_custom_product_view_action" model="ir.actions.act_window">
+        <field name="name">Product Code Action</field>
+        <field name="res_model">product.attribute</field>
+        <field name="view_mode">tree,form</field>
+        <field name="views">[('hta_custom_product.hta_product_attribut_tree_inherit', 'tree'),('hta_custom_product.hta_product_attribut_form_inherit', 'form')]</field>
+    </record>  
+      
+    <menuitem id="hta_custom_product.menu_root" name="Product Code" sequence="100"/>
+    <menuitem name="Product Attribute" id="hta_custom_product.product_attribute" parent="hta_custom_product.menu_root" action="hta_custom_product_view_action" sequence='1'/>
+    <!--  
+    <menuitem name="product_category" id="hta_product_code.category_article" parent="hta_product_code.menu_root"
+              action="category_article_action_window" sequence='1'/>
+    
+    <menuitem name="attribut_article" id="hta_product_code.attribut_article" parent="hta_product_code.menu_root"
+              action="attribut_article_action_window" sequence='3'/>
+    -->
+  </data>
+</odoo>

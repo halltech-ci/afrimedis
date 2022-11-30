@@ -1,0 +1,19 @@
+<odoo>
+  <data>
+      
+    <record id="product_code_action" mode='ir.actions.act_window'>
+        <field name="name">Product Code Action</field>
+        <field name="res_model"></field>
+    </record>  
+      
+    <menuitem id="hta_custom_product.menu_root" name="Product Code" sequence="100"/>
+    <menuitem name="Code Article" id="hta_product_code.code_article" parent="hta_product_code.menu_root"
+              action="code_article_action_window" sequence='2'/>
+      
+    <menuitem name="product_category" id="hta_product_code.category_article" parent="hta_product_code.menu_root"
+              action="category_article_action_window" sequence='1'/>
+    
+    <menuitem name="attribut_article" id="hta_product_code.attribut_article" parent="hta_product_code.menu_root"
+              action="attribut_article_action_window" sequence='3'/>
+  </data>
+</odoo>

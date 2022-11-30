@@ -1,0 +1,58 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="mailin_inherit_sms">
+      <field name="model">mailing.mailing</field>
+      <field name="inherit_id" ref="mass_mailing.view_mail_mass_mailing_form"/>
+      <field name="arch" type="xml">
+                      <!-- Buttons / Actions -->
+            <xpath expr="//button[@name='action_launch']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('mailing_type', '!=', 'mail'), ('state', 'in', ('in_queue', 'sending', 'done'))]}</attribute>
+            </xpath>
+            
+        <xpath expr="//header/button[@name='action_put_in_queue']" position="attributes">
+              <attribute name="attrs">{'invisible': ['|', ('mailing_type', 'in', ['mail','sms']), ('state', 'in', ('in_queue', 'sending', 'done'))]}</attribute>
+                        
+          </xpath>
+          <xpath expr="//header/button[@name='action_put_in_queue']" position="after">
+            <button name="action_launch_sms" type="object" class="oe_highlight" string="Send SMS" data-hotkey="v" attrs="{'invisible': ['|', '|', ('mailing_type', 'in', ['mail',]), ('state', 'in', ('in_queue', 'sending', 'done')), ('sms_force_send', '=', True)]}"
+                    confirm="This will send SMS to all recipients. Do you still want to proceed ?"/>
+            
+              <button name="action_schedule_send_sms" type="object" class="btn-secondary" string="Schedule SMS" attrs="{'invisible': ['|', '|', ('mailing_type', 'in', ['mail',]), ('state', 'in', ('in_queue', 'sending', 'done')), ('sms_force_send', '=', True)]}" data-hotkey="x"/>
+                        
+                    
+          </xpath>
+          
+          <xpath expr="//header/button[@name='action_schedule']" position="attributes">
+              <attribute name="attrs">{'invisible': ['|', ('mailing_type', 'in', ['sms',]), ('state', 'in', ('in_queue', 'sending', 'done'))]}</attribute>
+                        
+          </xpath>
+         
+          
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="mailin_inherit_sms_kanban">
+      <field name="model">mailing.mailing</field>
+      <field name="inherit_id" ref="mass_mailing_sms.mailing_mailing_view_kanban_sms"/>
+      <field name="arch" type="xml">
+                      <!-- Buttons / Actions -->
+          
+          <xpath expr="//div[hasclass('alert-warning')]" position="replace">
+                        
+          </xpath>
+        
+<!--           <xpath expr="//field[@name='sms_has_insufficient_credit']" position="replace">
+    
+          </xpath>
+          <xpath expr="//field[@name='sms_has_unregistered_account']" position="replace">
+    
+          </xpath> -->
+          
+          
+          
+      </field>
+    </record>
+
+
+  </data>
+</odoo>
